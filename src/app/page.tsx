@@ -99,10 +99,10 @@ export default function Home() {
         />
 
         {/* Prestigious Client Base Infinite Marquee */}
-        <Clients
+        {/* <Clients
           t={t}
           lang={lang}
-        />
+        /> */}
 
         {/* Sustainability & Certifications */}
         <Sustainability
@@ -111,10 +111,10 @@ export default function Home() {
         />
 
         {/* Contact Selector Inquiry Form */}
-        <Contact
+        {/* <Contact
           t={t}
           lang={lang}
-        />
+        /> */}
 
       </main>
 

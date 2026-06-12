@@ -48,81 +48,81 @@ export default function Home() {
 
   return (
     <div dir={lang === 'ar' ? 'rtl' : 'ltr'} className={`min-h-screen bg-[#0C0F12] text-white selection:bg-brand-teal/25 selection:text-white antialiased overflow-x-clip ${lang === 'ar' ? 'font-arabic' : 'font-sans'}`}>
-      
+
       {/* Premium Floating Capsule Navbar */}
-      <Navbar 
-        t={t} 
-        lang={lang} 
-        handleLangToggle={handleLangToggle} 
-        scrolled={scrolled} 
+      <Navbar
+        t={t}
+        lang={lang}
+        handleLangToggle={handleLangToggle}
+        scrolled={scrolled}
       />
 
       {/* Immersive Scroll-Synchronized 3D Curtain Hero */}
-      <Hero 
-        t={t} 
-        lang={lang} 
+      <Hero
+        t={t}
+        lang={lang}
       />
 
       {/* Main Content Sections */}
       <main className="relative z-30">
-        
+
         {/* Company Overview (Dawn Gulf Affiliation) */}
-        <Overview 
-          t={t} 
-          lang={lang} 
+        <Overview
+          t={t}
+          lang={lang}
         />
 
         {/* Core Values Quad */}
-        <Values 
+        {/* <Values 
           t={t} 
           lang={lang} 
-        />
+        /> */}
 
         {/* Specialized Products & Services */}
-        <Products 
-          t={t} 
-          lang={lang} 
-        />
+        {/* <Products
+          t={t}
+          lang={lang}
+        /> */}
 
         {/* Interactive Collections Gallery */}
-        <Gallery 
-          t={t} 
-          lang={lang} 
-          activeTab={activeTab} 
-          setActiveTab={setActiveTab} 
+        <Gallery
+          t={t}
+          lang={lang}
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
         />
 
         {/* Partnerships (Somfy / Schneider) */}
-        <Partnerships 
-          t={t} 
-          lang={lang} 
+        <Partnerships
+          t={t}
+          lang={lang}
         />
 
         {/* Prestigious Client Base Infinite Marquee */}
-        <Clients 
-          t={t} 
-          lang={lang} 
+        <Clients
+          t={t}
+          lang={lang}
         />
 
         {/* Sustainability & Certifications */}
-        <Sustainability 
-          t={t} 
-          lang={lang} 
+        <Sustainability
+          t={t}
+          lang={lang}
         />
 
         {/* Contact Selector Inquiry Form */}
-        <Contact 
-          t={t} 
-          lang={lang} 
+        <Contact
+          t={t}
+          lang={lang}
         />
 
       </main>
 
       {/* Redesigned Grid Footer */}
-      <Footer 
-        t={t} 
-        lang={lang} 
-        onSelectTab={setActiveTab} 
+      <Footer
+        t={t}
+        lang={lang}
+        onSelectTab={setActiveTab}
       />
 
     </div>

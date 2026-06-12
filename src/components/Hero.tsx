@@ -12,6 +12,8 @@ type Mood = "city" | "patio";
 
 export default function Hero({ t, lang }: HeroProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const imgRef = useRef<HTMLImageElement>(null);
+  const frameIndexRef = useRef(0);
 
   // Track scroll progress of the entire Hero section container
   const { scrollYProgress } = useScroll({
@@ -19,33 +21,63 @@ export default function Hero({ t, lang }: HeroProps) {
     offset: ["start start", "end end"]
   });
 
-  const [frameIndex, setFrameIndex] = useState(0);
   const [mood, setMood] = useState<Mood>("patio");
+  const inactivePreloaded = useRef(false);
 
-  // Synchronize scroll progress with frame indexes (0 to 95)
+  const getFramePath = (idx: number, currentMood: Mood = mood) => {
+    const folder = currentMood === "city" ? "hero-frames" : "hero-frames-patio";
+    return `/${folder}/frame_${String(idx).padStart(3, '0')}.jpg`;
+  };
+
+  const triggerInactivePreload = () => {
+    if (inactivePreloaded.current) return;
+    inactivePreloaded.current = true;
+    const folder = "hero-frames";
+    for (let i = 0; i < 96; i++) {
+      const img = new window.Image();
+      img.src = `/${folder}/frame_${String(i).padStart(3, '0')}.jpg`;
+    }
+  };
+
+  // Preload active mood immediately on mount
+  useEffect(() => {
+    const activeFolder = "hero-frames-patio";
+    for (let i = 0; i < 96; i++) {
+      const img = new window.Image();
+      img.src = `/${activeFolder}/frame_${String(i).padStart(3, '0')}.jpg`;
+    }
+
+    // Defer preloading the inactive mood (city) by 3 seconds
+    const timer = setTimeout(triggerInactivePreload, 3000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Synchronize scroll progress with frame indexes directly on the DOM (bypassing React re-renders)
   useEffect(() => {
     const unsubscribe = scrollYProgress.on("change", (latest) => {
       const idx = Math.min(95, Math.floor(latest * 96));
-      setFrameIndex(idx);
-    });
-    return () => unsubscribe();
-  }, [scrollYProgress]);
-
-  // Preload all frames for both views on component mount
-  useEffect(() => {
-    const moods: Mood[] = ["city", "patio"];
-    moods.forEach((m) => {
-      const folder = m === "city" ? "hero-frames" : "hero-frames-patio";
-      for (let i = 0; i < 96; i++) {
-        const img = new window.Image();
-        img.src = `/${folder}/frame_${String(i).padStart(3, '0')}.jpg`;
+      if (idx !== frameIndexRef.current) {
+        frameIndexRef.current = idx;
+        if (imgRef.current) {
+          imgRef.current.src = getFramePath(idx);
+        }
       }
     });
-  }, []);
+    return () => unsubscribe();
+  }, [scrollYProgress, mood]);
 
-  const getFramePath = (idx: number) => {
-    const folder = mood === "city" ? "hero-frames" : "hero-frames-patio";
-    return `/${folder}/frame_${String(idx).padStart(3, '0')}.jpg`;
+  // Update DOM frame path immediately when mood changes
+  useEffect(() => {
+    if (imgRef.current) {
+      imgRef.current.src = getFramePath(frameIndexRef.current);
+    }
+  }, [mood]);
+
+  const handleMoodChange = (newMood: Mood) => {
+    if (newMood === "city") {
+      triggerInactivePreload();
+    }
+    setMood(newMood);
   };
 
   // Scroll-reactive transformations for text content
@@ -79,7 +111,8 @@ export default function Hero({ t, lang }: HeroProps) {
           style={{ opacity: bgOpacity }}
         >
           <img
-            src={getFramePath(frameIndex)}
+            ref={imgRef}
+            src={getFramePath(0)}
             alt="Curtains opening frame"
             className="object-cover object-center w-full h-full select-none"
             draggable={false}
@@ -165,7 +198,9 @@ export default function Hero({ t, lang }: HeroProps) {
         <div className="absolute bottom-8 right-8 z-40 flex items-center gap-2">
           <div className="p-1 rounded-full bg-[#0C0F12]/80 border border-white/10 backdrop-blur-md flex items-center gap-1 shadow-lg">
             <button
-              onClick={() => setMood("city")}
+              onClick={() => handleMoodChange("city")}
+              onMouseEnter={triggerInactivePreload}
+              onFocus={triggerInactivePreload}
               className={`px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider transition-all duration-300 ${mood === "city"
                 ? "bg-brand-gold text-black shadow-md"
                 : "text-brand-ghost hover:text-white"
@@ -174,7 +209,7 @@ export default function Hero({ t, lang }: HeroProps) {
               {lang === "en" ? "Urban View" : "إطلالة المدينة"}
             </button>
             <button
-              onClick={() => setMood("patio")}
+              onClick={() => handleMoodChange("patio")}
               className={`px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider transition-all duration-300 ${mood === "patio"
                 ? "bg-brand-gold text-black shadow-md"
                 : "text-brand-ghost hover:text-white"

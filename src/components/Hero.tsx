@@ -1,0 +1,191 @@
+import { useState, useEffect, useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { Sparkles } from "lucide-react";
+import { TranslationKeys } from "@/app/translations";
+
+interface HeroProps {
+  t: TranslationKeys;
+  lang: "en" | "ar";
+}
+
+type Mood = "city" | "patio";
+
+export default function Hero({ t, lang }: HeroProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Track scroll progress of the entire Hero section container
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end end"]
+  });
+
+  const [frameIndex, setFrameIndex] = useState(0);
+  const [mood, setMood] = useState<Mood>("patio");
+
+  // Synchronize scroll progress with frame indexes (0 to 95)
+  useEffect(() => {
+    const unsubscribe = scrollYProgress.on("change", (latest) => {
+      const idx = Math.min(95, Math.floor(latest * 96));
+      setFrameIndex(idx);
+    });
+    return () => unsubscribe();
+  }, [scrollYProgress]);
+
+  // Preload all frames for both views on component mount
+  useEffect(() => {
+    const moods: Mood[] = ["city", "patio"];
+    moods.forEach((m) => {
+      const folder = m === "city" ? "hero-frames" : "hero-frames-patio";
+      for (let i = 0; i < 96; i++) {
+        const img = new window.Image();
+        img.src = `/${folder}/frame_${String(i).padStart(3, '0')}.jpg`;
+      }
+    });
+  }, []);
+
+  const getFramePath = (idx: number) => {
+    const folder = mood === "city" ? "hero-frames" : "hero-frames-patio";
+    return `/${folder}/frame_${String(idx).padStart(3, '0')}.jpg`;
+  };
+
+  // Scroll-reactive transformations for text content
+  const badgeOpacity = useTransform(scrollYProgress, [0.05, 0.25, 0.9, 1.0], [0, 1, 1, 0]);
+  const badgeY = useTransform(scrollYProgress, [0.05, 0.25, 0.9, 1.0], [25, 0, 0, -25]);
+
+  const titleOpacity = useTransform(scrollYProgress, [0.15, 0.35, 0.9, 1.0], [0, 1, 1, 0]);
+  const titleScale = useTransform(scrollYProgress, [0.15, 0.35, 0.9, 1.0], [0.94, 1, 1, 0.94]);
+
+  const subtitleOpacity = useTransform(scrollYProgress, [0.25, 0.45, 0.9, 1.0], [0, 1, 1, 0]);
+  const subtitleY = useTransform(scrollYProgress, [0.25, 0.45, 0.9, 1.0], [20, 0, 0, -20]);
+
+  const ctaOpacity = useTransform(scrollYProgress, [0.35, 0.55, 0.9, 1.0], [0, 1, 1, 0]);
+  const ctaY = useTransform(scrollYProgress, [0.35, 0.55, 0.9, 1.0], [20, 0, 0, -20]);
+
+  // Scroll down indicator fades out quickly as we scroll past the start
+  const indicatorOpacity = useTransform(scrollYProgress, [0, 0.12], [1, 0]);
+
+  // Background fades out slightly at the very end to merge with the next section
+  const bgOpacity = useTransform(scrollYProgress, [0.85, 1.0], [1, 0.4]);
+
+  return (
+    <div ref={containerRef} className="relative w-full h-[300vh] bg-[#07090b] z-30">
+
+      {/* Sticky Frame Viewer Container */}
+      <div className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center">
+
+        {/* Active Scroll Frame */}
+        <motion.div
+          className="absolute inset-0 z-0 pointer-events-none"
+          style={{ opacity: bgOpacity }}
+        >
+          <img
+            src={getFramePath(frameIndex)}
+            alt="Curtains opening frame"
+            className="object-cover object-center w-full h-full select-none"
+            draggable={false}
+          />
+          {/* Subtle dark vignette overlay for elite readability */}
+          <div className="absolute inset-0 bg-gradient-to-b from-[#0C0F12]/75 via-[#0C0F12]/15 to-[#0C0F12]" />
+        </motion.div>
+
+        {/* Content Box */}
+        <div className="max-w-5xl mx-auto px-6 text-center relative z-20 mt-12 pointer-events-auto">
+
+          {/* Dawn Gulf Group Affiliation Badge */}
+          <motion.div
+            style={{
+              opacity: badgeOpacity,
+              y: badgeY
+            }}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand-gold/10 border border-brand-gold/20 mb-6 backdrop-blur-sm"
+          >
+            <Sparkles className="w-3.5 h-3.5 text-brand-gold" />
+            <span className="text-[10px] sm:text-xs font-bold text-brand-gold uppercase tracking-widest">
+              {t.hero.badge}
+            </span>
+          </motion.div>
+
+          {/* Title */}
+          <motion.h1
+            style={{
+              opacity: titleOpacity,
+              scale: titleScale
+            }}
+            className="text-4xl sm:text-6xl md:text-7xl font-display font-extrabold text-white leading-tight tracking-tight mb-6"
+          >
+            {lang === 'en' ? (
+              <>Where <span className="text-brand-teal">Precision</span> Meets Elegance</>
+            ) : (
+              <>حيث تلتقي <span className="text-brand-teal">الدقة</span> بالأناقة</>
+            )}
+          </motion.h1>
+
+          {/* Description */}
+          <motion.p
+            style={{
+              opacity: subtitleOpacity,
+              y: subtitleY
+            }}
+            className="text-sm sm:text-base md:text-lg text-brand-mist max-w-2xl mx-auto leading-relaxed mb-10 font-medium"
+          >
+            {t.hero.subtitle}
+          </motion.p>
+
+          {/* Interactive CTAs */}
+          <motion.div
+            style={{
+              opacity: ctaOpacity,
+              y: ctaY
+            }}
+            className="flex flex-col sm:flex-row items-center justify-center gap-4"
+          >
+            <a href="#contact" className="btn-primary w-full sm:w-auto justify-center text-center">
+              <span className="relative z-10">{t.hero.cta1}</span>
+            </a>
+            <a href="#collections" className="btn-outline w-full sm:w-auto justify-center text-center">
+              <span className="relative z-10">{t.hero.cta2}</span>
+            </a>
+          </motion.div>
+        </div>
+
+        {/* Scroll Down Indicator */}
+        <motion.div
+          style={{ opacity: indicatorOpacity }}
+          className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2 pointer-events-none"
+        >
+          <span className="text-[10px] uppercase tracking-widest text-brand-ghost font-bold">
+            {lang === 'en' ? 'Scroll Down' : 'اسحب لأسفل'}
+          </span>
+          <div className="w-5 h-8 rounded-full border border-brand-teal/30 flex justify-center p-1">
+            <div className="w-1.5 h-1.5 bg-brand-teal rounded-full animate-bounce" />
+          </div>
+        </motion.div>
+
+        {/* Mood/View Selector Capsule */}
+        <div className="absolute bottom-8 right-8 z-40 flex items-center gap-2">
+          <div className="p-1 rounded-full bg-[#0C0F12]/80 border border-white/10 backdrop-blur-md flex items-center gap-1 shadow-lg">
+            <button
+              onClick={() => setMood("city")}
+              className={`px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider transition-all duration-300 ${mood === "city"
+                ? "bg-brand-gold text-black shadow-md"
+                : "text-brand-ghost hover:text-white"
+                }`}
+            >
+              {lang === "en" ? "Urban View" : "إطلالة المدينة"}
+            </button>
+            <button
+              onClick={() => setMood("patio")}
+              className={`px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider transition-all duration-300 ${mood === "patio"
+                ? "bg-brand-gold text-black shadow-md"
+                : "text-brand-ghost hover:text-white"
+                }`}
+            >
+              {lang === "en" ? "Garden Patio" : "حديقة فناء"}
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  );
+}

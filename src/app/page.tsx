@@ -1,65 +1,130 @@
-import Image from "next/image";
+"use client";
+
+import { useState, useEffect } from "react";
+import { translations } from "./translations";
+
+// Import Modular Components
+import Navbar from "@/components/Navbar";
+import Hero from "@/components/Hero";
+import Overview from "@/components/Overview";
+import Values from "@/components/Values";
+import Products from "@/components/Products";
+import Gallery from "@/components/Gallery";
+import Partnerships from "@/components/Partnerships";
+import Clients from "@/components/Clients";
+import Sustainability from "@/components/Sustainability";
+import Contact from "@/components/Contact";
+import Footer from "@/components/Footer";
 
 export default function Home() {
+  const [lang, setLang] = useState<"en" | "ar">("en");
+  const [activeTab, setActiveTab] = useState<string>("zebra");
+  const [scrolled, setScrolled] = useState(false);
+
+  const t = translations[lang];
+
+  // Set dir and lang attributes on document html tag
+  useEffect(() => {
+    document.documentElement.setAttribute("dir", lang === "ar" ? "rtl" : "ltr");
+    document.documentElement.setAttribute("lang", lang);
+  }, [lang]);
+
+  // Handle navbar padding and background change on scroll
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 50) {
+        setScrolled(true);
+      } else {
+        setScrolled(false);
+      }
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const handleLangToggle = () => {
+    setLang(lang === "en" ? "ar" : "en");
+  };
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <div dir={lang === 'ar' ? 'rtl' : 'ltr'} className={`min-h-screen bg-[#0C0F12] text-white selection:bg-brand-teal/25 selection:text-white antialiased overflow-x-clip ${lang === 'ar' ? 'font-arabic' : 'font-sans'}`}>
+      
+      {/* Premium Floating Capsule Navbar */}
+      <Navbar 
+        t={t} 
+        lang={lang} 
+        handleLangToggle={handleLangToggle} 
+        scrolled={scrolled} 
+      />
+
+      {/* Immersive Scroll-Synchronized 3D Curtain Hero */}
+      <Hero 
+        t={t} 
+        lang={lang} 
+      />
+
+      {/* Main Content Sections */}
+      <main className="relative z-30">
+        
+        {/* Company Overview (Dawn Gulf Affiliation) */}
+        <Overview 
+          t={t} 
+          lang={lang} 
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+
+        {/* Core Values Quad */}
+        <Values 
+          t={t} 
+          lang={lang} 
+        />
+
+        {/* Specialized Products & Services */}
+        <Products 
+          t={t} 
+          lang={lang} 
+        />
+
+        {/* Interactive Collections Gallery */}
+        <Gallery 
+          t={t} 
+          lang={lang} 
+          activeTab={activeTab} 
+          setActiveTab={setActiveTab} 
+        />
+
+        {/* Partnerships (Somfy / Schneider) */}
+        <Partnerships 
+          t={t} 
+          lang={lang} 
+        />
+
+        {/* Prestigious Client Base Infinite Marquee */}
+        <Clients 
+          t={t} 
+          lang={lang} 
+        />
+
+        {/* Sustainability & Certifications */}
+        <Sustainability 
+          t={t} 
+          lang={lang} 
+        />
+
+        {/* Contact Selector Inquiry Form */}
+        <Contact 
+          t={t} 
+          lang={lang} 
+        />
+
       </main>
+
+      {/* Redesigned Grid Footer */}
+      <Footer 
+        t={t} 
+        lang={lang} 
+        onSelectTab={setActiveTab} 
+      />
+
     </div>
   );
 }

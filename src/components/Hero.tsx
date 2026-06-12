@@ -147,9 +147,27 @@ export default function Hero({ t, lang }: HeroProps) {
             className="text-4xl sm:text-6xl md:text-7xl font-display font-extrabold text-white leading-tight tracking-tight mb-6"
           >
             {lang === 'en' ? (
-              <>Where <span className="text-brand-teal">Precision</span> Meets Elegance</>
+              <>
+                Where{" "}
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-brand-teal via-brand-cyan to-brand-seafoam">
+                  Precision
+                </span>{" "}
+                Meets{" "}
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-brand-gold via-[#F3E7C4] to-brand-gold">
+                  Elegance
+                </span>
+              </>
             ) : (
-              <>حيث تلتقي <span className="text-brand-teal">الدقة</span> بالأناقة</>
+              <>
+                حيث تلتقي{" "}
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-brand-teal via-brand-cyan to-brand-seafoam">
+                  الدقة
+                </span>{" "}
+                بـ{" "}
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-brand-gold via-[#F3E7C4] to-brand-gold">
+                  الأناقة
+                </span>
+              </>
             )}
           </motion.h1>
 

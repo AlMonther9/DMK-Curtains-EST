@@ -1,6 +1,14 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans, Inter, IBM_Plex_Sans_Arabic } from "next/font/google";
+import { Plus_Jakarta_Sans, Inter, IBM_Plex_Sans_Arabic, Playfair_Display } from "next/font/google";
 import "./globals.css";
+
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  style: ["normal", "italic"],
+  weight: ["400", "500", "600", "700", "800"],
+  variable: "--font-playfair",
+  display: "swap",
+});
 
 const plusJakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -39,7 +47,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${plusJakarta.variable} ${inter.variable} ${ibmPlexArabic.variable} h-full antialiased`}
+      className={`${plusJakarta.variable} ${inter.variable} ${ibmPlexArabic.variable} ${playfair.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-[#0C0F12] text-white">
         {children}

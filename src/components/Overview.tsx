@@ -50,12 +50,12 @@ export default function Overview({ t, lang }: OverviewProps) {
           >
             {/* Double Frame Layout with Gold Glow Sweep on Hover */}
             <div className="absolute inset-0 border border-brand-gold/20 rounded-2xl translate-x-3 translate-y-3 pointer-events-none transition-transform duration-500 group-hover:translate-x-1.5 group-hover:translate-y-1.5 group-hover:border-brand-gold/40" />
-            
             <div className="relative aspect-[4/3] rounded-2xl overflow-hidden border border-brand-teal/20 bg-brand-abyss shadow-2xl z-10">
               <Image 
                 src="/bedroom-curtains.png" 
                 alt="DMK Premium Bedroom Curtain Installation" 
                 fill
+                sizes="(min-width: 1024px) 50vw, 100vw"
                 className="object-cover transition-transform duration-700 group-hover:scale-105"
               />
               {/* Overlay sheen sweep */}

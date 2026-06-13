@@ -40,8 +40,8 @@
   50% { box-shadow: 0 0 40px rgba(0, 212, 216, 0.5); }
 }
 @keyframes shimmer {
-  0% { background-position: -200% center; }
-  100% { background-position: 200% center; }
+  0% { transform: translateX(0); }
+  100% { transform: translateX(100%); }
 }
 
 /* ─── BASE RESET ──────────────────────────────────────────────── */
@@ -278,15 +278,16 @@
   .btn-primary::before {
     content: '';
     position: absolute;
-    inset: 0;
-    border-radius: inherit;
+    top: 0;
+    left: -100%;
+    width: 200%;
+    height: 100%;
     background: linear-gradient(
       90deg,
       transparent 0%,
       rgba(255, 255, 255, 0.15) 50%,
       transparent 100%
     );
-    background-size: 200% 100%;
     animation: shimmer 2.5s ease-in-out infinite;
     pointer-events: none;
     z-index: 2;

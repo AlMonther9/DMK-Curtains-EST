@@ -264,7 +264,7 @@ export const translations: { en: TranslationKeys; ar: TranslationKeys } = {
       badge: "إحدى شركات مجموعة فجر الخليج",
       title: "حيث تلتقي الدقة بالأناقة",
       subtitle: "نعمل بالتوافق مع رؤية المملكة 2030 ورؤية عمان 2040 لتقديم أحدث أنظمة الستائر وتقنيات المنازل الذكية في منطقة الخليج العربي.",
-      cta1: "طلب استشارة مجانية",
+      cta1: "طلب استشارة",
       cta2: "استكشف مجموعتنا",
     },
     overview: {
@@ -340,7 +340,7 @@ export const translations: { en: TranslationKeys; ar: TranslationKeys } = {
       certificationsTitle: "معتمدة ومختبرة وفقاً لأعلى المعايير العالمية",
     },
     contact: {
-      title: "طلب استشارة مجانية",
+      title: "طلب استشارة",
       subtitle: "تحدث مع مهندسينا ومختصينا في الرياض أو مسقط لتصميم وتنفيذ مشروعك الخاص بأعلى دقة.",
       nameLabel: "الاسم الكامل",
       namePlaceholder: "أدخل اسمك الكريم",

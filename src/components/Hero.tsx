@@ -21,41 +21,67 @@ export default function Hero({ t, lang }: HeroProps) {
     offset: ["start start", "end end"]
   });
 
+  const TOTAL_FRAMES = 48;
   const [mood, setMood] = useState<Mood>("patio");
-  const inactivePreloaded = useRef(false);
+  const preloadedFolders = useRef<Record<string, boolean>>({});
 
   const getFramePath = (idx: number, currentMood: Mood = mood) => {
     const folder = currentMood === "city" ? "hero-frames" : "hero-frames-patio";
-    return `/${folder}/frame_${String(idx).padStart(3, '0')}.jpg`;
+    return `/${folder}/frame_${String(idx).padStart(3, '0')}.webp`;
   };
 
-  const triggerInactivePreload = () => {
-    if (inactivePreloaded.current) return;
-    inactivePreloaded.current = true;
-    const folder = "hero-frames";
-    for (let i = 0; i < 96; i++) {
-      const img = new window.Image();
-      img.src = `/${folder}/frame_${String(i).padStart(3, '0')}.jpg`;
+  const preloadFolder = async (folder: string) => {
+    if (preloadedFolders.current[folder]) return;
+    preloadedFolders.current[folder] = true;
+
+    const concurrency = 4;
+    const indices = Array.from({ length: TOTAL_FRAMES }, (_, i) => i);
+
+    for (let i = 0; i < indices.length; i += concurrency) {
+      const batch = indices.slice(i, i + concurrency).map((idx) => {
+        return new Promise<void>((resolve) => {
+          const img = new window.Image();
+          img.src = `/${folder}/frame_${String(idx).padStart(3, '0')}.webp`;
+          img.onload = () => resolve();
+          img.onerror = () => resolve();
+        });
+      });
+      await Promise.all(batch);
     }
   };
 
-  // Preload active mood immediately on mount
+  // Preload active mood after mount, then inactive mood
   useEffect(() => {
-    const activeFolder = "hero-frames-patio";
-    for (let i = 0; i < 96; i++) {
-      const img = new window.Image();
-      img.src = `/${activeFolder}/frame_${String(i).padStart(3, '0')}.jpg`;
+    const activeFolder = mood === "city" ? "hero-frames" : "hero-frames-patio";
+    const inactiveFolder = mood === "city" ? "hero-frames-patio" : "hero-frames";
+
+    const runPreloads = async () => {
+      // 1. Preload active mood
+      await preloadFolder(activeFolder);
+      
+      // 2. Wait 3 seconds, then preload inactive mood
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+      await preloadFolder(inactiveFolder);
+    };
+
+    let timer: NodeJS.Timeout;
+    if (typeof window.requestIdleCallback === "function") {
+      window.requestIdleCallback(() => {
+        runPreloads();
+      });
+    } else {
+      timer = setTimeout(runPreloads, 1000);
     }
 
-    // Defer preloading the inactive mood (city) by 3 seconds
-    const timer = setTimeout(triggerInactivePreload, 3000);
-    return () => clearTimeout(timer);
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
   }, []);
 
   // Synchronize scroll progress with frame indexes directly on the DOM (bypassing React re-renders)
   useEffect(() => {
     const unsubscribe = scrollYProgress.on("change", (latest) => {
-      const idx = Math.min(95, Math.floor(latest * 96));
+      const idx = Math.min(TOTAL_FRAMES - 1, Math.floor(latest * TOTAL_FRAMES));
       if (idx !== frameIndexRef.current) {
         frameIndexRef.current = idx;
         if (imgRef.current) {
@@ -74,9 +100,8 @@ export default function Hero({ t, lang }: HeroProps) {
   }, [mood]);
 
   const handleMoodChange = (newMood: Mood) => {
-    if (newMood === "city") {
-      triggerInactivePreload();
-    }
+    const newFolder = newMood === "city" ? "hero-frames" : "hero-frames-patio";
+    preloadFolder(newFolder);
     setMood(newMood);
   };
 
@@ -101,6 +126,14 @@ export default function Hero({ t, lang }: HeroProps) {
 
   return (
     <div ref={containerRef} className="relative w-full h-[300vh] bg-[#07090b] z-30">
+      {/* Hoisted critical preload for first frame (LCP optimization) */}
+      <link
+        rel="preload"
+        href="/hero-frames-patio/frame_000.webp"
+        as="image"
+        type="image/webp"
+        fetchPriority="high"
+      />
 
       {/* Sticky Frame Viewer Container */}
       <div className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center">
@@ -217,8 +250,8 @@ export default function Hero({ t, lang }: HeroProps) {
           <div className="p-1 rounded-full bg-[#0C0F12]/80 border border-white/10 backdrop-blur-md flex items-center gap-1 shadow-lg">
             <button
               onClick={() => handleMoodChange("city")}
-              onMouseEnter={triggerInactivePreload}
-              onFocus={triggerInactivePreload}
+              onMouseEnter={() => preloadFolder("hero-frames")}
+              onFocus={() => preloadFolder("hero-frames")}
               className={`px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider transition-all duration-300 ${mood === "city"
                 ? "bg-brand-gold text-black shadow-md"
                 : "text-brand-ghost hover:text-white"
@@ -228,6 +261,8 @@ export default function Hero({ t, lang }: HeroProps) {
             </button>
             <button
               onClick={() => handleMoodChange("patio")}
+              onMouseEnter={() => preloadFolder("hero-frames-patio")}
+              onFocus={() => preloadFolder("hero-frames-patio")}
               className={`px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider transition-all duration-300 ${mood === "patio"
                 ? "bg-brand-gold text-black shadow-md"
                 : "text-brand-ghost hover:text-white"

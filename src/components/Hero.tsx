@@ -124,7 +124,7 @@ export default function Hero({ t, lang }: HeroProps) {
     const runPreloads = async () => {
       // 1. Preload active mood
       await preloadFolder(activeFolder);
-      
+
       // 2. Wait 3 seconds, then preload inactive mood
       await new Promise((resolve) => setTimeout(resolve, 3000));
       await preloadFolder(inactiveFolder);
@@ -294,7 +294,7 @@ export default function Hero({ t, lang }: HeroProps) {
         {/* Scroll Down Indicator */}
         <motion.div
           style={{ opacity: indicatorOpacity }}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2 pointer-events-none"
+          className="absolute bottom-6 md:bottom-8 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2 pointer-events-none"
         >
           <span className="text-[10px] uppercase tracking-widest text-brand-ghost font-bold">
             {lang === 'en' ? 'Scroll Down' : 'اسحب لأسفل'}
@@ -305,13 +305,13 @@ export default function Hero({ t, lang }: HeroProps) {
         </motion.div>
 
         {/* Mood/View Selector Capsule */}
-        <div className="absolute bottom-8 right-8 z-40 flex items-center gap-2">
+        <div className="absolute bottom-20 md:bottom-8 left-1/2 -translate-x-1/2 md:left-auto md:translate-x-0 md:right-8 z-40 flex items-center gap-2">
           <div className="p-1 rounded-full bg-[#0C0F12]/80 border border-white/10 backdrop-blur-md flex items-center gap-1 shadow-lg">
             <button
               onClick={() => handleMoodChange("city")}
               onMouseEnter={() => preloadFolder("hero-frames")}
               onFocus={() => preloadFolder("hero-frames")}
-              className={`px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider transition-all duration-300 ${mood === "city"
+              className={`px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider transition-all duration-300 cursor-pointer ${mood === "city"
                 ? "bg-brand-gold text-black shadow-md"
                 : "text-brand-ghost hover:text-white"
                 }`}

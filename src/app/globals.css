@@ -14,7 +14,8 @@
 
   --font-display: var(--font-playfair), serif;
   --font-sans: var(--font-inter), system-ui, sans-serif;
-  --font-arabic: var(--font-ibm-arabic), sans-serif;
+  --font-arabic: var(--font-arabic), sans-serif;
+  --font-arabic-display: var(--font-arabic-display), serif;
 
   --animate-marquee: marquee 30s linear infinite;
   --animate-fade-up: fadeUp 0.7s ease forwards;
@@ -74,9 +75,13 @@
     font-family: var(--font-arabic);
     direction: rtl;
     text-align: right;
-    line-height: 1.9;
-    letter-spacing: 0.01em;
-    word-spacing: 0.05em;
+    line-height: 1.8;
+    letter-spacing: 0;
+    word-spacing: 0.02em;
+  }
+
+  [dir="rtl"] * {
+    letter-spacing: 0 !important;
   }
 
   /* Arabic body text — larger base size for readability */
@@ -90,12 +95,23 @@
     font-weight: 400;
   }
 
-  /* Arabic headings — semi-bold instead of extra-bold for clarity */
+  /* Arabic headings — Reem Kufi display font for high-end feel */
   [dir="rtl"] h1, [dir="rtl"] h2, [dir="rtl"] h3, [dir="rtl"] h4, [dir="rtl"] h5, [dir="rtl"] h6 {
-    font-family: var(--font-arabic);
+    font-family: var(--font-arabic-display), serif !important;
     font-weight: 600;
     line-height: 1.35;
     letter-spacing: 0;
+  }
+
+  /* Ensure spans inside display headings inherit the display font family */
+  [dir="rtl"] h1 span,
+  [dir="rtl"] h2 span,
+  [dir="rtl"] h3 span,
+  [dir="rtl"] h4 span,
+  [dir="rtl"] h5 span,
+  [dir="rtl"] h6 span,
+  [dir="rtl"] .font-arabic-display span {
+    font-family: inherit !important;
   }
 
   /* Bump up small Arabic text for readability */

@@ -210,7 +210,7 @@ export default function Hero({ t, lang }: HeroProps) {
             className="object-cover object-center w-full h-full select-none"
           />
           {/* Subtle dark vignette overlay for elite readability */}
-          <div className="absolute inset-0 bg-gradient-to-b from-[#0C0F12]/75 via-[#0C0F12]/15 to-[#0C0F12]" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#0C0F12]/85 via-[#0C0F12]/45 to-[#0C0F12]" />
         </motion.div>
 
         {/* Content Box */}
@@ -222,10 +222,10 @@ export default function Hero({ t, lang }: HeroProps) {
               opacity: badgeOpacity,
               y: badgeY
             }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand-gold/10 border border-brand-gold/20 mb-6 backdrop-blur-sm"
+            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.03] border border-white/10 mb-6 backdrop-blur-md"
           >
-            <Sparkles className="w-3.5 h-3.5 text-brand-gold" />
-            <span className="text-[10px] sm:text-xs font-bold text-brand-gold uppercase tracking-widest">
+            <div className="w-1.5 h-1.5 rounded-full bg-brand-gold animate-pulse" />
+            <span className="text-[9px] sm:text-[10px] font-bold text-[#EAEAEB] uppercase tracking-widest">
               {t.hero.badge}
             </span>
           </motion.div>
@@ -236,27 +236,29 @@ export default function Hero({ t, lang }: HeroProps) {
               opacity: titleOpacity,
               scale: titleScale
             }}
-            className="text-4xl sm:text-6xl md:text-7xl font-display font-extrabold text-white leading-tight tracking-tight mb-6"
+            className={`text-4xl sm:text-6xl md:text-7xl font-bold text-white leading-tight mb-6 ${
+              lang === 'ar' ? 'font-arabic-display' : 'font-display'
+            }`}
           >
             {lang === 'en' ? (
               <>
                 Where{" "}
-                <span className="bg-clip-text text-transparent bg-gradient-to-r from-brand-teal via-brand-cyan to-brand-seafoam">
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-brand-teal via-brand-cyan to-brand-seafoam drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)] font-display">
                   Precision
                 </span>{" "}
                 Meets{" "}
-                <span className="bg-clip-text text-transparent bg-gradient-to-r from-brand-gold via-[#F3E7C4] to-brand-gold">
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#E6C787] via-[#FFF3D1] to-[#C29D53] drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)] font-display">
                   Elegance
                 </span>
               </>
             ) : (
               <>
                 حيث تلتقي{" "}
-                <span className="bg-clip-text text-transparent bg-gradient-to-r from-brand-teal via-brand-cyan to-brand-seafoam">
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-brand-teal via-brand-cyan to-brand-seafoam drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)] font-arabic-display">
                   الدقة
                 </span>{" "}
                 بـ{" "}
-                <span className="bg-clip-text text-transparent bg-gradient-to-r from-brand-gold via-[#F3E7C4] to-brand-gold">
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#E6C787] via-[#FFF3D1] to-[#C29D53] drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)] font-arabic-display">
                   الأناقة
                 </span>
               </>
@@ -289,12 +291,46 @@ export default function Hero({ t, lang }: HeroProps) {
               <span className="relative z-10">{t.hero.cta2}</span>
             </a>
           </motion.div>
+
+          {/* Mobile Mood/View Selector Capsule */}
+          <motion.div
+            style={{
+              opacity: ctaOpacity,
+              y: ctaY
+            }}
+            className="flex md:hidden justify-center mt-6"
+          >
+            <div className="p-1 rounded-full bg-[#0C0F12]/80 border border-white/10 backdrop-blur-md flex items-center gap-1 shadow-lg pointer-events-auto">
+              <button
+                onClick={() => handleMoodChange("city")}
+                onMouseEnter={() => preloadFolder("hero-frames")}
+                onFocus={() => preloadFolder("hero-frames")}
+                className={`px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider transition-all duration-300 cursor-pointer ${mood === "city"
+                  ? "bg-brand-gold text-black shadow-md"
+                  : "text-brand-ghost hover:text-white"
+                  }`}
+              >
+                {lang === "en" ? "Urban View" : "إطلالة المدينة"}
+              </button>
+              <button
+                onClick={() => handleMoodChange("patio")}
+                onMouseEnter={() => preloadFolder("hero-frames-patio")}
+                onFocus={() => preloadFolder("hero-frames-patio")}
+                className={`px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider transition-all duration-300 cursor-pointer ${mood === "patio"
+                  ? "bg-brand-gold text-black shadow-md"
+                  : "text-brand-ghost hover:text-white"
+                  }`}
+              >
+                {lang === "en" ? "Garden Patio" : "حديقة فناء"}
+              </button>
+            </div>
+          </motion.div>
         </div>
 
         {/* Scroll Down Indicator */}
         <motion.div
           style={{ opacity: indicatorOpacity }}
-          className="absolute bottom-6 md:bottom-8 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2 pointer-events-none"
+          className="absolute bottom-2 md:bottom-8 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2 pointer-events-none"
         >
           <span className="text-[10px] uppercase tracking-widest text-brand-ghost font-bold">
             {lang === 'en' ? 'Scroll Down' : 'اسحب لأسفل'}
@@ -304,8 +340,8 @@ export default function Hero({ t, lang }: HeroProps) {
           </div>
         </motion.div>
 
-        {/* Mood/View Selector Capsule */}
-        <div className="absolute bottom-20 md:bottom-8 left-1/2 -translate-x-1/2 md:left-auto md:translate-x-0 md:right-8 z-40 flex items-center gap-2">
+        {/* Desktop Mood/View Selector Capsule */}
+        <div className="hidden md:flex absolute bottom-8 right-8 z-40 items-center gap-2">
           <div className="p-1 rounded-full bg-[#0C0F12]/80 border border-white/10 backdrop-blur-md flex items-center gap-1 shadow-lg">
             <button
               onClick={() => handleMoodChange("city")}

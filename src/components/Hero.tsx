@@ -12,8 +12,12 @@ type Mood = "city" | "patio";
 
 export default function Hero({ t, lang }: HeroProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const imgRef = useRef<HTMLImageElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   const frameIndexRef = useRef(0);
+  const imagesCache = useRef<Record<string, HTMLImageElement[]>>({
+    "hero-frames": [],
+    "hero-frames-patio": []
+  });
 
   // Track scroll progress of the entire Hero section container
   const { scrollYProgress } = useScroll({
@@ -30,6 +34,35 @@ export default function Hero({ t, lang }: HeroProps) {
     return `/${folder}/frame_${String(idx).padStart(3, '0')}.webp`;
   };
 
+  const drawFrame = (idx: number, currentMood: Mood = mood) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const folder = currentMood === "city" ? "hero-frames" : "hero-frames-patio";
+    const cache = imagesCache.current[folder];
+    const cachedImg = cache ? cache[idx] : null;
+
+    if (cachedImg && cachedImg.complete) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(cachedImg, 0, 0, canvas.width, canvas.height);
+    } else {
+      // Fallback: load on-demand, but don't clear the canvas (prevents screen flicker)
+      const img = new window.Image();
+      img.src = getFramePath(idx, currentMood);
+      img.onload = () => {
+        if (cache) {
+          cache[idx] = img;
+        }
+        if (frameIndexRef.current === idx && mood === currentMood) {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        }
+      };
+    }
+  };
+
   const preloadFolder = async (folder: string) => {
     if (preloadedFolders.current[folder]) return;
     preloadedFolders.current[folder] = true;
@@ -42,13 +75,46 @@ export default function Hero({ t, lang }: HeroProps) {
         return new Promise<void>((resolve) => {
           const img = new window.Image();
           img.src = `/${folder}/frame_${String(idx).padStart(3, '0')}.webp`;
-          img.onload = () => resolve();
+          img.onload = () => {
+            if (imagesCache.current[folder]) {
+              imagesCache.current[folder][idx] = img;
+            }
+            // If the image loaded is the current active index, render it immediately!
+            if (frameIndexRef.current === idx && ((mood === "city" && folder === "hero-frames") || (mood === "patio" && folder === "hero-frames-patio"))) {
+              drawFrame(idx, mood);
+            }
+            resolve();
+          };
           img.onerror = () => resolve();
         });
       });
       await Promise.all(batch);
     }
   };
+
+  // Initialize canvas size and draw first frame immediately on mount
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (canvas) {
+      canvas.width = 1440;
+      canvas.height = 810;
+
+      // Draw first frame of default mood
+      const folder = mood === "city" ? "hero-frames" : "hero-frames-patio";
+      const img = new window.Image();
+      img.src = `/${folder}/frame_000.webp`;
+      img.onload = () => {
+        imagesCache.current[folder][0] = img;
+        if (frameIndexRef.current === 0) {
+          const ctx = canvas.getContext("2d");
+          if (ctx) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          }
+        }
+      };
+    }
+  }, []);
 
   // Preload active mood after mount, then inactive mood
   useEffect(() => {
@@ -78,25 +144,21 @@ export default function Hero({ t, lang }: HeroProps) {
     };
   }, []);
 
-  // Synchronize scroll progress with frame indexes directly on the DOM (bypassing React re-renders)
+  // Synchronize scroll progress with frame indexes on the canvas (bypassing React re-renders)
   useEffect(() => {
     const unsubscribe = scrollYProgress.on("change", (latest) => {
       const idx = Math.min(TOTAL_FRAMES - 1, Math.floor(latest * TOTAL_FRAMES));
       if (idx !== frameIndexRef.current) {
         frameIndexRef.current = idx;
-        if (imgRef.current) {
-          imgRef.current.src = getFramePath(idx);
-        }
+        drawFrame(idx, mood);
       }
     });
     return () => unsubscribe();
   }, [scrollYProgress, mood]);
 
-  // Update DOM frame path immediately when mood changes
+  // Redraw canvas immediately when mood changes
   useEffect(() => {
-    if (imgRef.current) {
-      imgRef.current.src = getFramePath(frameIndexRef.current);
-    }
+    drawFrame(frameIndexRef.current, mood);
   }, [mood]);
 
   const handleMoodChange = (newMood: Mood) => {
@@ -143,12 +205,9 @@ export default function Hero({ t, lang }: HeroProps) {
           className="absolute inset-0 z-0 pointer-events-none"
           style={{ opacity: bgOpacity }}
         >
-          <img
-            ref={imgRef}
-            src={getFramePath(0)}
-            alt="Curtains opening frame"
+          <canvas
+            ref={canvasRef}
             className="object-cover object-center w-full h-full select-none"
-            draggable={false}
           />
           {/* Subtle dark vignette overlay for elite readability */}
           <div className="absolute inset-0 bg-gradient-to-b from-[#0C0F12]/75 via-[#0C0F12]/15 to-[#0C0F12]" />

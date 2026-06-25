@@ -34,10 +34,8 @@ export default function Navbar({ t, lang, handleLangToggle, scrolled }: NavbarPr
 
         {/* Logo */}
         <a href="#" className="flex items-center gap-3 group">
-          <div className="w-10 h-10 rounded-full bg-brand-teal/10 border border-brand-teal/20 flex items-center justify-center transition-transform group-hover:scale-105">
-            <svg className="w-6 h-6 text-brand-teal" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-              <path d="M4 3v18M20 3v18M4 7h16M4 14h16M8 3c0 4 8 4 8 0" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
+          <div className="w-10 h-10 rounded-full overflow-hidden border border-brand-teal/25 bg-brand-obsidian flex items-center justify-center transition-all duration-300 group-hover:scale-105 group-hover:border-brand-teal">
+            <img src="/favicon.png" alt="DMK Logo" className="w-full h-full object-cover" />
           </div>
           <div className="flex flex-col">
             <span className="font-display font-extrabold text-sm sm:text-base tracking-wider text-white">DMK CURTAINS</span>

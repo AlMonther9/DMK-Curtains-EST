@@ -59,10 +59,8 @@ export default function Footer({ t, lang, onSelectTab }: FooterProps) {
           {/* Column 1: Brand details */}
           <div className="lg:col-span-4 flex flex-col items-start gap-4">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-brand-teal flex items-center justify-center">
-                <svg className="w-5 h-5 text-brand-obsidian" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <path d="M4 3v18M20 3v18M4 7h16M4 14h16M8 3c0 4 8 4 8 0" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
+              <div className="w-9 h-9 rounded-lg overflow-hidden border border-brand-teal/25 bg-brand-obsidian flex items-center justify-center">
+                <img src="/favicon.png" alt="DMK Logo" className="w-full h-full object-cover" />
               </div>
               <span className="font-display font-extrabold text-lg tracking-wider text-white">DMK CURTAINS</span>
             </div>

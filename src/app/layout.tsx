@@ -39,11 +39,34 @@ const reemKufi = Reem_Kufi({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://dmk-curtains-est.vercel.app"),
   title: "DMK Curtains EST. | Premium Curtain & Smart Home Solutions",
   description: "Damak Curtains EST. is a leading provider of high-quality, sustainable, and smart curtain solutions across Saudi Arabia (Riyadh) and Oman (Muscat). Part of Dawn Gulf Group.",
   icons: {
-    icon: "/favicon.ico",
-  }
+    icon: "/favicon.png",
+  },
+  openGraph: {
+    title: "DMK Curtains EST. | Premium Curtain & Smart Home Solutions",
+    description: "Damak Curtains EST. is a leading provider of high-quality, sustainable, and smart curtain solutions across Saudi Arabia (Riyadh) and Oman (Muscat). Part of Dawn Gulf Group.",
+    url: "https://dmk-curtains-est.vercel.app/",
+    siteName: "DMK Curtains",
+    images: [
+      {
+        url: "/logo.png",
+        width: 1024,
+        height: 1024,
+        alt: "DMK Curtains Logo",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "DMK Curtains EST. | Premium Curtain & Smart Home Solutions",
+    description: "Damak Curtains EST. is a leading provider of high-quality, sustainable, and smart curtain solutions across Saudi Arabia (Riyadh) and Oman (Muscat). Part of Dawn Gulf Group.",
+    images: ["/logo.png"],
+  },
 };
 
 export default function RootLayout({

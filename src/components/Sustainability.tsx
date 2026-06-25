@@ -36,6 +36,7 @@ export default function Sustainability({ t, lang }: SustainabilityProps) {
                 src="/sustainability-fabric.png"
                 alt="Eco Friendly Curtain Fabric"
                 fill
+                sizes="(min-width: 1024px) 40vw, 100vw"
                 className="object-cover hover:scale-105 transition-transform duration-700"
               />
             </div>

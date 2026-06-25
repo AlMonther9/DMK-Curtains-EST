@@ -154,6 +154,7 @@ export default function Gallery({ t, lang, activeTab, setActiveTab }: GalleryPro
                     src={getCurtainImage(activeTab)} 
                     alt={activeCurtainDetails.title} 
                     fill
+                    sizes="(min-width: 1024px) 40vw, 100vw"
                     className="object-cover transition-all duration-700 hover:scale-105"
                   />
                 </div>
